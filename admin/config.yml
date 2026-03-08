@@ -1,0 +1,29 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# 图片上传路径配置
+media_folder: "images"
+public_folder: "/images"
+
+collections:
+  - name: "database"
+    label: "🗄️ 势必全站数据中心"
+    files:
+      - name: "articles"
+        label: "📚 智库文章管理"
+        file: "articles.json"
+        description: "在这里添加、修改或删除智库文章"
+        fields:
+          - name: "items"
+            label: "文章列表 (最新写的文章请拖拽到最上面)"
+            widget: "list"
+            fields:
+              - {label: "文章专属ID (极重要！只能用英文/数字/横杠，如: ai-trend-2026，这是文章的网址后缀)", name: "id", widget: "string"}
+              - {label: "是否设为头条推荐 (打勾后会变成大卡片)", name: "is_featured", widget: "boolean", default: false}
+              - {label: "文章标题", name: "title", widget: "string"}
+              - {label: "分类标签 (须精确填入: Report / Methodology / Case)", name: "category", widget: "string", default: "Report"}
+              - {label: "发布日期", name: "date", widget: "date", format: "MMM DD, YYYY"}
+              - {label: "阅读时长 (分钟)", name: "read_time", widget: "number", default: 5}
+              - {label: "列表页摘要 (控制在100字以内)", name: "summary", widget: "text"}
+              - {label: "文章正文", name: "body", widget: "markdown"}

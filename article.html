@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加载中... | 势必智库</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@700,600&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --cyan-accent: #00e5cc;
+            --bg-dark: #03050a;
+        }
+        body { 
+            background-color: var(--bg-dark); 
+            color: white; 
+            font-family: 'Satoshi', sans-serif; 
+            margin: 0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        /* 繁星与星云背景 */
+        .stars { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(1px 1px at 25px 5px, rgba(255,255,255,0.5), transparent),
+                radial-gradient(1px 1px at 50px 25px, rgba(255,255,255,0.3), transparent),
+                radial-gradient(1.5px 1.5px at 125px 20px, rgba(255,255,255,0.4), transparent);
+            background-size: 150px 150px; 
+            z-index: -2; 
+        }
+        .nebula { 
+            position: fixed; top: 0%; left: 0%; width: 100%; height: 100%; 
+            background: radial-gradient(ellipse at 50% 0%, rgba(0, 229, 204, 0.05) 0%, transparent 80%); 
+            z-index: -1; filter: blur(90px); pointer-events: none; 
+        }
+
+        /* 顶部阅读进度条 */
+        #progress-bar {
+            position: fixed; top: 0; left: 0; height: 2px;
+            background: var(--cyan-accent);
+            width: 0%; z-index: 1000;
+            transition: width 0.1s ease-out;
+            box-shadow: 0 0 10px var(--cyan-accent);
+        }
+        
+        .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; transition: 0.3s ease; }
+        .back-btn { position: absolute; top: 40px; left: 40px; z-index: 100; }
+
+        /* 沉浸式文章排版核心样式 (适配了 Markdown 渲染后的标签) */
+        .article-prose {
+            color: #9ca3af; 
+            font-size: 1.05rem;
+            line-height: 1.8;
+            letter-spacing: 0.02em;
+        }
+        .article-prose h1, .article-prose h2, .article-prose h3 {
+            font-family: 'Clash Display', sans-serif;
+            color: #ffffff;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .article-prose h2 { font-size: 1.8rem; margin-top: 3rem; margin-bottom: 1.2rem; }
+        .article-prose h3 { font-size: 1.4rem; margin-top: 2rem; margin-bottom: 1rem; color: #e5e7eb; }
+        .article-prose p { margin-bottom: 1.8rem; }
+        .article-prose strong { color: #ffffff; font-weight: 600; }
+        .article-prose blockquote {
+            border-left: 2px solid var(--cyan-accent);
+            background: linear-gradient(to right, rgba(0, 229, 204, 0.05), transparent);
+            padding: 1.5rem 2rem;
+            margin: 2.5rem 0;
+            border-radius: 0 16px 16px 0;
+            font-size: 1.15rem;
+            color: #d1d5db;
+            font-style: italic;
+        }
+        .article-prose ul { list-style-type: none; padding: 0; margin-bottom: 2rem; }
+        .article-prose li { position: relative; padding-left: 1.5rem; margin-bottom: 1rem; }
+        .article-prose li::before { content: "•"; position: absolute; left: 0; color: var(--cyan-accent); font-weight: bold; }
+        
+        /* 确保后台上传的图片能够完美自适应并带有高级圆角边框 */
+        .article-prose img { max-width: 100%; height: auto; border-radius: 12px; margin: 2rem auto; border: 1px solid rgba(255,255,255,0.1); }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
+    </style>
+</head>
+<body>
+
+    <div id="progress-bar"></div>
+    <div class="stars"></div>
+    <div class="nebula"></div>
+
+    <a href="method.html" class="back-btn glass-card !rounded-full px-5 py-2 text-[11px] font-bold tracking-widest text-gray-400 hover:text-white uppercase flex items-center gap-2 hover:translate-y-0">
+        <span>←</span> 智库列表
+    </a>
+
+    <div class="absolute top-[40px] right-10 z-50 opacity-50 hover:opacity-100 transition hidden md:block">
+        <div class="text-sm font-bold tracking-tighter text-white">HITIBIG 势必</div>
+    </div>
+
+    <main class="max-w-3xl mx-auto px-6 pt-32 pb-32">
+        
+        <header id="article-header" class="mb-16 animate__animated animate__fadeInUp">
+            <div class="text-center text-gray-500 py-20">正在解析并加载文章内容...</div>
+        </header>
+
+        <article id="article-body" class="article-prose animate__animated animate__fadeInUp animate__delay-1s">
+        </article>
+
+        <footer id="article-footer" class="mt-20 pt-10 border-t border-white/10 animate__animated animate__fadeInUp animate__delay-2s hidden">
+            
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-16">
+                <div class="flex flex-wrap justify-center gap-2">
+                    <span class="text-xs text-gray-500 border border-white/10 px-3 py-1 rounded-full"># 品牌升级</span>
+                    <span class="text-xs text-gray-500 border border-white/10 px-3 py-1 rounded-full"># AI Agent</span>
+                    <span class="text-xs text-gray-500 border border-white/10 px-3 py-1 rounded-full"># 商业逻辑</span>
+                </div>
+                
+                <div class="flex items-center gap-4 text-sm text-gray-400">
+                    <span>分享至：</span>
+                    <button onclick="shareToWeChat()" class="hover:text-[#07C160] transition-colors duration-300 outline-none">微信</button>
+                    <button onclick="copyToShare('小红书')" class="hover:text-[#FF2442] transition-colors duration-300 outline-none">小红书</button>
+                    <button onclick="copyToShare('抖音')" class="hover:text-[#FE2C55] transition-colors duration-300 outline-none">抖音</button>
+                    <button onclick="copyToShare('知乎')" class="hover:text-[#0066FF] transition-colors duration-300 outline-none">知乎</button>
+                </div>
+            </div>
+
+            <div class="glass-card p-10 text-center relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-t from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <h3 class="text-2xl font-bold mb-4 relative z-10 text-white">让您的品牌拥有数字“真身”</h3>
+                <p class="text-gray-400 text-sm mb-8 relative z-10">预约势必专家，为您免费出具一份《品牌心智 Agent 可行性评估》。</p>
+                
+                <a href="index.html#contact" class="inline-block bg-white text-black px-10 py-3.5 rounded-full text-xs font-bold hover:bg-cyan-400 hover:scale-105 transition-all uppercase tracking-widest relative z-10">
+                    预约专家对谈
+                </a>
+            </div>
+        </footer>
+
+    </main>
+
+    <div id="wechat-modal" class="fixed inset-0 bg-[#03050a]/90 backdrop-blur-md flex items-center justify-center z-[200] opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-card p-8 flex flex-col items-center relative shadow-[0_0_50px_rgba(7,193,96,0.1)] border-[#07C160]/30">
+            <button onclick="closeWeChatModal()" class="absolute top-4 right-5 text-gray-500 hover:text-white text-xl outline-none">✕</button>
+            <div class="w-10 h-10 rounded-full bg-[#07C160]/20 flex items-center justify-center mb-4">
+                <svg class="w-5 h-5 text-[#07C160]" fill="currentColor" viewBox="0 0 24 24"><path d="M8.5,13.5L11,16.5L14.5,12L19,18H5M21,19V5C21,3.89 20.1,3 19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19Z"/></svg>
+            </div>
+            <h4 class="text-white font-bold mb-6 tracking-widest text-sm">分享到微信</h4>
+            <div class="bg-white p-3 rounded-xl shadow-lg">
+                <img id="qrcode-img" src="" alt="微信扫码分享" class="w-40 h-40 object-contain">
+            </div>
+            <p class="text-[11px] text-gray-400 mt-6 tracking-widest uppercase">打开微信 “扫一扫”</p>
+        </div>
+    </div>
+
+    <div id="share-toast" class="fixed top-10 left-1/2 -translate-x-1/2 z-[200] opacity-0 -translate-y-10 transition-all duration-500 pointer-events-none">
+        <div class="glass-card px-6 py-3 flex items-center gap-3 border-cyan-500/40 bg-[#050810]/95 shadow-[0_0_30px_rgba(0,229,204,0.15)]">
+            <div class="w-5 h-5 rounded-full bg-cyan-400 flex items-center justify-center text-black font-bold text-[10px]">✓</div>
+            <span id="toast-msg" class="text-xs font-bold text-white tracking-wide">链接已复制</span>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <script>
+        // ==========================================
+        // 核心逻辑 1：从后台数据拉取并渲染文章内容
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", () => {
+            // 解析网址中携带的 ID，例如 article.html?id=xxx
+            const urlParams = new URLSearchParams(window.location.search);
+            const articleId = urlParams.get('id');
+
+            if (!articleId) {
+                document.getElementById('article-header').innerHTML = '<h1 class="text-3xl text-center text-white font-bold">⚠️ 未找到该文章</h1>';
+                return;
+            }
+
+            // 请求统一的后台数据文件
+            fetch('/articles.json')
+                .then(res => {
+                    if (!res.ok) throw new Error("无法加载数据");
+                    return res.json();
+                })
+                .then(data => {
+                    // 找到和网址 ID 匹配的那篇文章
+                    const article = data.items.find(item => item.id === articleId);
+                    
+                    if (article) {
+                        // 1. 组装并渲染头部 (保持了您截图里的高级感排版)
+                        document.getElementById('article-header').innerHTML = `
+                            <div class="flex items-center gap-4 mb-6">
+                                <span class="text-[10px] text-cyan-400 font-bold tracking-widest uppercase border border-cyan-400/30 px-3 py-1 rounded-full bg-cyan-400/10">${article.category}</span>
+                                <time class="text-[11px] text-gray-500 tracking-widest uppercase">${article.date}</time>
+                                <span class="text-[11px] text-gray-500 tracking-widest uppercase flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    ${article.read_time} Min Read
+                                </span>
+                            </div>
+                            
+                            <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-8 leading-tight font-['Clash_Display'] text-white">
+                                ${article.title}
+                            </h1>
+                            
+                            <div class="flex items-center gap-3 pt-6 border-t border-white/10">
+                                <div class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center border border-white/20 overflow-hidden">
+                                    <img src="./avatar.png" alt="Author" class="w-full h-full object-cover" onerror="this.style.display='none'">
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-white">势必AI品牌实验室</div>
+                                    <div class="text-[10px] text-gray-500 uppercase tracking-widest">首席心智架构师</div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // 2. 利用 marked.js 将后台写的 Markdown 转成精美的 HTML 正文
+                        document.getElementById('article-body').innerHTML = marked.parse(article.body);
+                        
+                        // 3. 动态替换网页标题 (SEO 最关键的一步)
+                        document.title = `${article.title} | 势必智库`;
+                        
+                        // 4. 显示底部分享和引流模块
+                        document.getElementById('article-footer').classList.remove('hidden');
+
+                    } else {
+                        throw new Error("文章不存在");
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('article-header').innerHTML = '<h1 class="text-3xl text-center text-white mt-20 font-bold">⚠️ 文章获取失败或已被删除</h1>';
+                });
+        });
+
+        // ==========================================
+        // 核心逻辑 2：交互动效 (进度条与分享)
+        // ==========================================
+        
+        // 阅读进度条监听脚本
+        window.onscroll = function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (height > 0) ? (winScroll / height) * 100 : 0;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+        };
+
+        // 微信分享：生成当前网页二维码并弹窗
+        function shareToWeChat() {
+            const currentUrl = encodeURIComponent(window.location.href);
+            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=${currentUrl}`;
+            document.getElementById('qrcode-img').src = qrApiUrl;
+            
+            const modal = document.getElementById('wechat-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        // 关闭微信弹窗
+        function closeWeChatModal() {
+            const modal = document.getElementById('wechat-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // 小红书/抖音/知乎分享：复制链接策略
+        function copyToShare(platform) {
+            const pageTitle = document.title.split('|')[0].trim();
+            const currentUrl = window.location.href;
+            const textToCopy = `势必实验室深度洞察：\n《${pageTitle}》\n👉 立即阅读：${currentUrl}`;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const toast = document.getElementById('share-toast');
+                document.getElementById('toast-msg').innerText = `已复制！请前往【${platform}】粘贴分享`;
+                
+                toast.classList.remove('opacity-0', '-translate-y-10');
+                toast.classList.add('opacity-100', 'translate-y-0');
+                
+                setTimeout(() => {
+                    toast.classList.remove('opacity-100', 'translate-y-0');
+                    toast.classList.add('opacity-0', '-translate-y-10');
+                }, 3000);
+            }).catch(err => {
+                alert('您的浏览器不支持自动复制，请手动复制网址栏的链接。');
+            });
+        }
+    </script>
+</body>
+</html>
