@@ -16,8 +16,9 @@ collections:
         description: "在这里添加、修改或删除智库文章"
         fields:
           - name: "items"
-            label: "文章列表 (最新写的文章请拖拽到最上面)"
+            label: "文章列表 (系统已开启自动按日期排序，无需且禁止拖拽)"
             widget: "list"
+            sortable: false
             fields:
               - {label: "文章专属ID (极重要！只能用英文/数字/横杠，如: ai-trend-2026，这是文章的网址后缀)", name: "id", widget: "string"}
               - {label: "是否设为头条推荐 (打勾后会变成大卡片)", name: "is_featured", widget: "boolean", default: false}
