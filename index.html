@@ -329,13 +329,14 @@
     </div>
 
     <script>
-        // 1. Agent 聊天与快捷提问
+       // 1. Agent 聊天与核心剧本杀引擎
         function sendChat() {
             const input = document.getElementById('user-msg');
             const box = document.getElementById('chat-window');
             const msg = input.value.trim();
             if (!msg) return;
 
+            // 步骤 A：把用户发的话显示在屏幕右边
             box.innerHTML += `
                 <div class="flex justify-end animate__animated animate__fadeInRight">
                     <div class="bg-cyan-500 p-4 rounded-2xl rounded-tr-none text-sm max-w-[85%] font-bold text-[#050810]">
@@ -345,16 +346,49 @@
             input.value = '';
             box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
 
+            // ==========================================
+            // 🚨 您的“5个核心问题”金句库就写在这里！
+            // 原理：通过检索用户输入(msg)里是否包含某个“关键词”来触发对应的回答
+            // ==========================================
+            let aiResponse = "";
+
+            // 🎯 问题 1：关于“报价 / 收费 / 预算”
+            if (msg.includes("报价") || msg.includes("收费") || msg.includes("多少钱") || msg.includes("预算")) {
+                aiResponse = "势必的咨询服务分为【轻量化心智诊断】与【全案 Agent 部署】。由于每家企业的商业基建不同，我们需要先进行一次免费的线上对谈，才能为您输出准确的评估与报价。请在下方表单留下联系方式。";
+            } 
+            // 🎯 问题 2：关于“案例 / 客户 / 效果”
+            else if (msg.includes("案例") || msg.includes("客户") || msg.includes("效果") || msg.includes("复购") || msg.includes("私域")) {
+                aiResponse = "我们曾为某头部美妆品牌部署了【专属护肤顾问 Agent】，抛弃传统群发，成功将沉睡用户唤醒率提升 27%，季度复购率飙升 300%。您可以点击下方导航栏的“实战案例”查看深度拆解。";
+            } 
+            // 🎯 问题 3：关于“怎么合作 / 流程 / 周期”
+            else if (msg.includes("合作") || msg.includes("流程") || msg.includes("周期") || msg.includes("时间")) {
+                aiResponse = "标准的品牌系统跃迁分为三步：1. 专家对谈与心智诊断；2. 品牌人格化语料规训与 Agent 建模；3. 自动化触达链路部署与调优。整个高频陪跑周期约 1-2 个月。";
+            }
+            // 🎯 问题 4：关于“什么是 Agent / 与客服机器人的区别”
+            else if (msg.includes("Agent") || msg.includes("客服") || msg.includes("区别") || msg.includes("大模型") || msg.includes("AI")) {
+                aiResponse = "传统的客服机器人只能机械地回答标准问题，而势必为您构建的 Agent 拥有【独立的品牌灵魂】。它不仅懂业务，更能运用消费心理学在对话中隐性植入高价值锚点，实现从“销售”到“首席体验官”的跃迁。";
+            }
+            // 🎯 问题 5：关于“报告 / 白皮书 / 资料下载”
+            else if (msg.includes("报告") || msg.includes("白皮书") || msg.includes("资料") || msg.includes("下载")) {
+                aiResponse = "《2026 品牌 Agent 心智溢价趋势白皮书》已入库。由于涉及大量未公开的测试数据，请您向下滑动至页面底部的【获取系统入口】，留下联系方式，我们的专家将定向为您发送完整版。";
+            }
+            // 🎯 兜底话术（如果客户问了上面 5 个以外的任何词）
+            else {
+                aiResponse = `已收到关于“${msg}”的指令。该诉求涉及极其深度的【品牌心智重构策略】。请您向下滑动至页面底部的系统入口，留下联系方式，我将指派势必人类专家为您出具定制化的可行性评估方案。`;
+            }
+            // ==========================================
+
+            // 步骤 B：模拟 AI 思考延迟，然后把准备好的回答显示在屏幕左边
             setTimeout(() => {
                 box.innerHTML += `
                     <div class="flex gap-4 animate__animated animate__fadeInLeft">
                         <img src="./avatar.png" alt="SB Agent" class="w-6 h-6 rounded-full object-cover shadow-[0_0_8px_rgba(0,229,204,0.8),0_0_16px_rgba(0,229,204,0.4)] flex-shrink-0">
                         <div class="bg-white/4 p-3 rounded-1xl rounded-tl-none border border-white/5 text-sm leading-relaxed max-w-[85%] text-gray-200">
-                            已收到关于“${msg}”的指令。势必 AI 正在思考中……您可以向下滚动了解详细的服务与方法论。
+                            ${aiResponse}
                         </div>
                     </div>`;
                 box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
-            }, 800);
+            }, 800); // 这里的 800 是假装思考的毫秒数 (0.8秒)
         }
 
         function quickAsk(text) {
