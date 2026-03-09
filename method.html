@@ -75,22 +75,25 @@
             
             let allArticles = []; // 用于在内存中保存抓取到的所有文章
 
-            // 1. 从后台抓取数据
+         // 1. 从后台抓取数据
             fetch('/articles.json')
+                .then(res => {
+                    // 🌟 核心修复：这里补回了极其关键的“解析 JSON”指令！
+                    if (!res.ok) throw new Error("无法读取数据");
+                    return res.json(); 
+                })
                 .then(data => {
                     if (data.items && data.items.length > 0) {
-                        // 🌟 核心升级：前台全自动按日期从新到旧排序！
-                        // 无论您在后台是先写的新文章还是旧文章，前台都会自动把日期最近的排在最前面。
+                        // 🌟 自动按日期从新到旧排序
                         allArticles = data.items.sort((a, b) => new Date(b.date) - new Date(a.date));
-                        
-                        renderArticles('all'); // 首次加载，渲染全部分类
+                        renderArticles('all'); 
                     } else {
                         wrapper.innerHTML = '<div class="text-center text-gray-500 py-10">暂无智库文章，请前往后台发布。</div>';
                     }
                 })
                 .catch(err => {
                     console.error(err);
-                    wrapper.innerHTML = '<div class="text-center text-gray-500 py-10">后台数据未准备好，请确认已在 admin 成功发布文章。</div>';
+                    wrapper.innerHTML = '<div class="text-center text-gray-500 py-10">数据暂未同步，请确保已在后台发布文章。</div>';
                 });
 
             // 2. 绑定分类按钮的点击事件
