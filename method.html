@@ -77,13 +77,12 @@
 
             // 1. 从后台抓取数据
             fetch('/articles.json')
-                .then(response => {
-                    if (!response.ok) throw new Error("Network response was not ok");
-                    return response.json();
-                })
                 .then(data => {
                     if (data.items && data.items.length > 0) {
-                        allArticles = data.items;
+                        // 🌟 核心升级：前台全自动按日期从新到旧排序！
+                        // 无论您在后台是先写的新文章还是旧文章，前台都会自动把日期最近的排在最前面。
+                        allArticles = data.items.sort((a, b) => new Date(b.date) - new Date(a.date));
+                        
                         renderArticles('all'); // 首次加载，渲染全部分类
                     } else {
                         wrapper.innerHTML = '<div class="text-center text-gray-500 py-10">暂无智库文章，请前往后台发布。</div>';
